@@ -493,8 +493,10 @@ static int __init init_pstore_fs(void)
 		goto out;
 
 	err = register_filesystem(&pstore_fs_type);
-	if (err < 0)
+	if (err < 0) {
 		sysfs_remove_mount_point(fs_kobj, "pstore");
+		goto out;
+	}
 
 out:
 	return err;
