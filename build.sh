@@ -32,7 +32,7 @@ done
 
 SECONDS=0 # builtin bash timer
 
-ZIPNAME="STRIX-sweet-revival-$(date '+%Y%m%d-%H%M').zip"
+ZIPNAME="STRIX-sweet-MIUI-$(date '+%Y%m%d-%H%M').zip"
 
 export ARCH=arm64
 export KBUILD_BUILD_USER=vbajs
@@ -80,7 +80,7 @@ if [ ! -f "$kernel" ] || [ ! -f "$dtbo" ] || [ ! -f "$dtb" ]; then
 fi
 
 if [ "$oss_only" = true ]; then
-	echo -e "\nNot compiling MIUI dimensions..."
+	echo -e "\nNot compiling OSS dimensions..."
 	echo -e "\nKernel compiled successfully! Zipping up...\n"
 	if [ -d "$AK3_DIR" ]; then
 		cp -r $AK3_DIR AnyKernel3
@@ -104,7 +104,7 @@ if [ "$oss_only" = true ]; then
 		   head=$(git rev-parse --verify HEAD 2>/dev/null); then
 		        HASH="$(echo $head | cut -c1-8)"
 		fi
-		./telegram/telegram -f $ZIPNAME -C "Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) ! Latest commit: $HASH !!WARNING!! OSS Only build!"
+		./telegram/telegram -f $ZIPNAME -C "Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) ! Latest commit: $HASH !!WARNING!! MIUI Only build!"
 	fi
 	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
 	echo "Zip: $ZIPNAME"
