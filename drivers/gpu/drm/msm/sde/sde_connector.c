@@ -1865,7 +1865,7 @@ static irqreturn_t esd_err_irq_handle(int irq, void *data)
 	char err_irq_gpio_value = 1;
 
 	if (!c_conn && !c_conn->display) {
-		SDE_DEFERRED_ERROR("not able to get connector object\n");
+		SDE_ERROR("not able to get connector object\n");
 		return IRQ_HANDLED;
 	}
 
@@ -1875,18 +1875,6 @@ static irqreturn_t esd_err_irq_handle(int irq, void *data)
 			panel_on = dsi_display->panel->panel_initialized;
 			err_irq_gpio_value = gpio_get_value(dsi_display->panel->esd_config.esd_err_irq_gpio);
 		}
-	}
-
-	if (panel_on && (c_conn->panel_dead == false) && err_irq_gpio_value == 0) {
-		SDE_DEFERRED_ERROR("esd check irq report PANEL_DEAD conn_id: %d enc_id: %d, panel_status[%d]\n",
-		c_conn->base.base.id, c_conn->encoder->base.id, panel_on);
-		dsi_display->panel->panel_dead_flag = true;
-		c_conn->panel_dead = true;
-		event.type = DRM_EVENT_PANEL_DEAD;
-		event.length = sizeof(bool);
-		msm_mode_object_event_notify(&c_conn->base.base,
-			c_conn->base.dev, &event, (u8 *)&c_conn->panel_dead);
-		sde_encoder_display_failure_notification(c_conn->encoder, false);
 	}
 	return IRQ_HANDLED;
 }
