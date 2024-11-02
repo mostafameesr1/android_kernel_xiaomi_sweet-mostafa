@@ -64,7 +64,7 @@ sed -i "s/device\.name1=.*/device.name1=${DEVICE}/" AnyKernel3/anykernel.sh
 sed -i "s/device\.name2=.*/device.name2=${DEVICE}in/" AnyKernel3/anykernel.sh
 
 cp $kernel AnyKernel3
-cp $dtbo AnyKernel3/dtbo/oss
+cp $dtbo AnyKernel3
 cp $dtb AnyKernel3
 cd AnyKernel3
 zip -r9 "../$ZIPNAME" * -x .git
