@@ -5,33 +5,32 @@
 
 SECONDS=0 # builtin bash timer
 
-# Allowed codenames
-ALLOWED_CODENAMES=("sweet" "courbet" "tucana" "toco" "phoenix" "davinci")
-
-# Prompt user for device codename
-read -p "Enter device codename: " DEVICE
-
-# Check if the entered codename is in the allowed list
-if [[ ! " ${ALLOWED_CODENAMES[@]} " =~ " ${DEVICE} " ]]; then
-    echo "Error: Invalid codename. Allowed codenames are: ${ALLOWED_CODENAMES[*]}"
-    exit 1
-fi
-
-ZIPNAME="STRIX-${DEVICE}-revival-$(date '+%Y%m%d-%H%M').zip"
+ZIPNAME="STRIX-sweet-revival-$(date '+%Y%m%d-%H%M').zip"
 
 export ARCH=arm64
 export KBUILD_BUILD_USER=vbajs
 export KBUILD_BUILD_HOST=tbyool
-export PATH="/home/vbajs/toolchains/zyc-clang/20.0.0git-20241001-release/bin/:$PATH"
+
+if [ ! -d "$PWD/clang" ]; then
+	wget "$(curl -s https://raw.githubusercontent.com/XSans0/WeebX-Clang/main/main/link.txt)" -O "weebx-clang.tar.gz"
+	mkdir clang && tar -xvf weebx-clang.tar.gz -C clang && rm -rf weebx-clang.tar.gz
+else
+	echo "\nLocal clang dir found"
+fi
+
+export PATH="$PWD/clang/bin/:$PATH"
+export KBUILD_COMPILER_STRING="$($PWD/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
+
+git clone --depth=1 https://github.com/fabianonline/telegram.sh.git telegram
 
 if [[ $1 = "-c" || $1 = "--clean" ]]; then
 	rm -rf out
 	echo "Cleaned output folder"
 fi
 
-echo -e "\nStarting compilation for $DEVICE...\n"
-make O=out ARCH=arm64 vendor/${DEVICE}_defconfig
-make -j$(nproc) \
+echo -e "\nStarting compilation...\n"
+make O=out ARCH=arm64 vendor/sweet_defconfig
+make -j$(nproc --all) \
     O=out \
     ARCH=arm64 \
     LLVM=1 \
@@ -60,8 +59,8 @@ else
 fi
 
 # Modify anykernel.sh to replace device names
-sed -i "s/device\.name1=.*/device.name1=${DEVICE}/" AnyKernel3/anykernel.sh
-sed -i "s/device\.name2=.*/device.name2=${DEVICE}in/" AnyKernel3/anykernel.sh
+sed -i "s/device\.name1=.*/device.name1=sweet/" AnyKernel3/anykernel.sh
+sed -i "s/device\.name2=.*/device.name2=sweetin/" AnyKernel3/anykernel.sh
 
 cp $kernel AnyKernel3
 cp $dtbo AnyKernel3
@@ -72,3 +71,10 @@ cd ..
 rm -rf AnyKernel3
 echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
 echo "Zip: $ZIPNAME"
+
+if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
+   head=$(git rev-parse --verify HEAD 2>/dev/null); then
+	HASH="$(echo $head | cut -c1-8)"
+fi
+
+./telegram/telegram -f $ZIPNAME -C "Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) ! Latest commit: $HASH"
