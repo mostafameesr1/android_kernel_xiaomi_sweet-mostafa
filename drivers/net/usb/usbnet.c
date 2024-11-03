@@ -2307,7 +2307,6 @@ static int __init usbnet_init(void)
 		if (!usbnet_ipc_log_ctxt[i])
 			pr_err("%s: Error getting ipc_log_ctxt\n", __func__);
 #endif
-	}
 
 	return 0;
 }
