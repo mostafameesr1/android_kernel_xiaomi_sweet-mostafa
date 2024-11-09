@@ -15,7 +15,7 @@ if [ ! -d "$PWD/clang" ]; then
 	wget "$(curl -s https://raw.githubusercontent.com/ZyCromerZ/Clang/main/Clang-main-link.txt)" -O "zyc-clang.tar.gz"
 	mkdir clang && tar -xvf zyc-clang.tar.gz -C clang && rm -rf zyc-clang.tar.gz
 else
-	echo "\nLocal clang dir found"
+	echo "Local clang dir found, will not download clang and using that instead"
 fi
 
 export PATH="$PWD/clang/bin/:$PATH"
@@ -36,7 +36,7 @@ make -j$(nproc --all) \
     LLVM=1 \
     LLVM_IAS=1 \
     CROSS_COMPILE=aarch64-linux-gnu- \
-    CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+    CROSS_COMPILE_COMPAT=arm-linux-gnueabi-
 
 kernel="out/arch/arm64/boot/Image.gz"
 dtbo="out/arch/arm64/boot/dtbo.img"
