@@ -12,8 +12,8 @@ export KBUILD_BUILD_USER=vbajs
 export KBUILD_BUILD_HOST=tbyool
 
 if [ ! -d "$PWD/clang" ]; then
-	wget "$(curl -s https://raw.githubusercontent.com/XSans0/WeebX-Clang/main/main/link.txt)" -O "weebx-clang.tar.gz"
-	mkdir clang && tar -xvf weebx-clang.tar.gz -C clang && rm -rf weebx-clang.tar.gz
+	wget "$(curl -s https://raw.githubusercontent.com/ZyCromerZ/Clang/main/Clang-main-link.txt)" -O "zyc-clang.tar.gz"
+	mkdir clang && tar -xvf zyc-clang.tar.gz -C clang && rm -rf zyc-clang.tar.gz
 else
 	echo "\nLocal clang dir found"
 fi
