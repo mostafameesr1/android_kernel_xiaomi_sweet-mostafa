@@ -1,0 +1,16 @@
+diff --git a/arch/arm64/boot/dts/qcom/dsi-panel-k6-38-0c-0a-fhd-dsc-video.dtsi b/arch/arm64/boot/dts/qcom/dsi-panel-k6-38-0c-0a-fhd-dsc-video.dtsi
+index 290681b1bc1b..ef08fafd8b20 100644
+--- a/arch/arm64/boot/dts/qcom/dsi-panel-k6-38-0c-0a-fhd-dsc-video.dtsi
++++ b/arch/arm64/boot/dts/qcom/dsi-panel-k6-38-0c-0a-fhd-dsc-video.dtsi
+@@ -41,8 +41,8 @@
+ 		qcom,mdss-dsi-dma-trigger = "trigger_sw";
+ 		qcom,mdss-dsi-mdp-trigger = "none";
+ 		qcom,mdss-dsi-reset-sequence = <0 1>, <1 10>;
+-		qcom,mdss-pan-physical-width-dimension = <69>;
+-		qcom,mdss-pan-physical-height-dimension = <154>;
++		qcom,mdss-pan-physical-width-dimension = <695>;
++		qcom,mdss-pan-physical-height-dimension = <1546>;
+ 		qcom,mdss-dsi-tx-eot-append;
+ 		qcom,dispparam-enabled;
+ 		qcom,mdss-dsi-panel-hdr-enabled;
+
