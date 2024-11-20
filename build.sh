@@ -52,6 +52,33 @@ if [ ! -f "$kernel" ] || [ ! -f "$dtbo" ] || [ ! -f "$dtb" ]; then
 	exit 1
 fi
 
+if [[ $1 = '--oss-only' ]]; then
+	echo -e "\nNot compiling MIUI dimensions..."
+	echo -e "\nKernel compiled successfully! Zipping up...\n"
+	if [ -d "$AK3_DIR" ]; then
+		cp -r $AK3_DIR AnyKernel3
+	else
+		if ! git clone -q https://github.com/vbajs/AnyKernel3.git -b fiqri AnyKernel3; then
+			echo -e "\nAnyKernel3 repo not found locally and couldn't clone from GitHub! Aborting..."
+			exit 1
+		fi
+	fi
+	cp $kernel AnyKernel3
+	cp $dtbo AnyKernel3
+	cp $dtb AnyKernel3
+	cd AnyKernel3
+	zip -r9 "../$ZIPNAME" * -x .git README.md
+	cd ..
+	rm -rf AnyKernel3
+	if [[ $1 = "-l" || $1 = "--local" ]]; then
+		git restore arch/arm64/configs/vendor/sweet_defconfig
+	fi
+	# No need to add check for telegram.sh since very likely this is being bulit locally
+	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
+	echo "Zip: $ZIPNAME"
+	exit 0
+fi
+
 echo -e "\nCompiled Kernel + OSS dimensions, now compiling MIUI dimensions while dirty.."
 mkdir ./out/arch/arm64/boot/oss/
 cp $dtbo out/arch/arm64/boot/oss/dtbo.img
