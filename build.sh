@@ -3,6 +3,33 @@
 # Compile script for kernel
 #
 
+# Initialize flags for options
+clean=false
+local=false
+oss_only=false
+
+# Use getopt for parsing long and short options
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -c|--clean)
+      clean=true
+      shift
+      ;;
+    -l|--local)
+      local=true
+      shift
+      ;;
+    --oss-only)
+      oss_only=true
+      shift
+      ;;
+    *)
+      echo "Unknown option: $1"
+      exit 1
+      ;;
+  esac
+done
+
 SECONDS=0 # builtin bash timer
 
 ZIPNAME="STRIX-sweet-revival-$(date '+%Y%m%d-%H%M').zip"
@@ -21,14 +48,14 @@ fi
 export PATH="$PWD/clang/bin/:$PATH"
 export KBUILD_COMPILER_STRING="$($PWD/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
 
-if [[ $1 = "-l" || $1 = "--local" ]]; then
+if [ "$local" = true ]; then
 	echo "Local build, disabling LTO and not cloning telegram.sh.."
 	patch -p1 < local-build.patch
 else
 	git clone --depth=1 https://github.com/fabianonline/telegram.sh.git telegram
 fi
 
-if [[ $1 = "-c" || $1 = "--clean" ]]; then
+if [ "$clean" = true ]; then
 	rm -rf out
 	echo "Cleaned output folder"
 fi
@@ -52,7 +79,7 @@ if [ ! -f "$kernel" ] || [ ! -f "$dtbo" ] || [ ! -f "$dtb" ]; then
 	exit 1
 fi
 
-if [[ $1 = '--oss-only' ]]; then
+if [ "$oss_only" = true ]; then
 	echo -e "\nNot compiling MIUI dimensions..."
 	echo -e "\nKernel compiled successfully! Zipping up...\n"
 	if [ -d "$AK3_DIR" ]; then
@@ -70,10 +97,11 @@ if [[ $1 = '--oss-only' ]]; then
 	zip -r9 "../$ZIPNAME" * -x .git README.md
 	cd ..
 	rm -rf AnyKernel3
-	if [[ $1 = "-l" || $1 = "--local" ]]; then
+	if [ "$local" = true ]; then
 		git restore arch/arm64/configs/vendor/sweet_defconfig
+	else
+		./telegram/telegram -f $ZIPNAME -C "Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) ! Latest commit: $HASH !!WARNING!! OSS Only build!"
 	fi
-	# No need to add check for telegram.sh since very likely this is being bulit locally
 	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
 	echo "Zip: $ZIPNAME"
 	exit 0
@@ -139,6 +167,6 @@ if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
 	HASH="$(echo $head | cut -c1-8)"
 fi
 
-if [[ ! $1 = "-l" || ! $1 = "--local" ]]; then
+if [ "$local" = false ]; then
 	./telegram/telegram -f $ZIPNAME -C "Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) ! Latest commit: $HASH"
 fi
