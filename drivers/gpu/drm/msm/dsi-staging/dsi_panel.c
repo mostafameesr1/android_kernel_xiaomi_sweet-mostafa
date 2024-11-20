@@ -4753,6 +4753,8 @@ int dsi_panel_set_nolp(struct dsi_panel *panel)
 	}
 
 	mutex_lock(&panel->panel_lock);
+	if (!panel->panel_initialized)
+		goto exit;
 
 	/**
 	 * Consider about LP1->LP2->NOLP.
