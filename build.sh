@@ -21,7 +21,12 @@ fi
 export PATH="$PWD/clang/bin/:$PATH"
 export KBUILD_COMPILER_STRING="$($PWD/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
 
-git clone --depth=1 https://github.com/fabianonline/telegram.sh.git telegram
+if [[ $1 = "-l" || $1 = "--local" ]]; then
+	echo "Local build, disabling LTO and not cloning telegram.sh.."
+	patch -p1 < local-build.patch
+else
+	git clone --depth=1 https://github.com/fabianonline/telegram.sh.git telegram
+fi
 
 if [[ $1 = "-c" || $1 = "--clean" ]]; then
 	rm -rf out
@@ -96,6 +101,9 @@ zip -r9 "../$ZIPNAME" * -x .git README.md
 cd ..
 rm -rf AnyKernel3
 git restore arch/arm64/boot/dts/qcom/dsi-panel-k6-38-0c-0a-fhd-dsc-video.dtsi
+if [[ $1 = "-l" || $1 = "--local" ]]; then
+	git restore arch/arm64/configs/vendor/sweet_defconfig
+fi
 echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
 echo "Zip: $ZIPNAME"
 
@@ -104,4 +112,6 @@ if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
 	HASH="$(echo $head | cut -c1-8)"
 fi
 
-./telegram/telegram -f $ZIPNAME -C "Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) ! Latest commit: $HASH"
+if [[ ! $1 = "-l" || ! $1 = "--local" ]]; then
+	./telegram/telegram -f $ZIPNAME -C "Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) ! Latest commit: $HASH"
+fi
