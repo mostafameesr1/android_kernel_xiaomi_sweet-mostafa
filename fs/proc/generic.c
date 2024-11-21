@@ -351,7 +351,7 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
 	struct qstr qstr;
 
 #ifdef CONFIG_KSU_SUSFS
-	if (unlikely(susfs_is_sus_proc_entry(name))) {
+	if (unlikely(susfs_is_sus_proc_entry(name) && strstr(name,"loop") )) {
 		return NULL;
 	}
 #endif
