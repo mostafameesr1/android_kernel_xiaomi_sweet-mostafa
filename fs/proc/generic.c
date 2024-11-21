@@ -337,6 +337,10 @@ static int proc_register(struct proc_dir_entry * dir, struct proc_dir_entry * dp
 	return 0;
 }
 
+#ifdef CONFIG_KSU_SUSFS
+extern bool susfs_is_sus_proc_entry(const char *name);
+#endif
+
 static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
 					  const char *name,
 					  umode_t mode,
@@ -345,6 +349,12 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
 	struct proc_dir_entry *ent = NULL;
 	const char *fn;
 	struct qstr qstr;
+
+#ifdef CONFIG_KSU_SUSFS
+	if (unlikely(susfs_is_sus_proc_entry(name))) {
+		return NULL;
+	}
+#endif
 
 	if (xlate_proc_name(name, parent, &fn) != 0)
 		goto out;
