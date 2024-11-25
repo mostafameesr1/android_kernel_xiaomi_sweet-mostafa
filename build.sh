@@ -156,7 +156,7 @@ zip -r9 "../$ZIPNAME" * -x .git README.md
 cd ..
 rm -rf AnyKernel3
 git restore arch/arm64/boot/dts/qcom/dsi-panel-k6-38-0c-0a-fhd-dsc-video.dtsi
-if [[ $1 = "-l" || $1 = "--local" ]]; then
+if [[ "$local" = true ]]; then
 	git restore arch/arm64/configs/vendor/sweet_defconfig
 fi
 echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
