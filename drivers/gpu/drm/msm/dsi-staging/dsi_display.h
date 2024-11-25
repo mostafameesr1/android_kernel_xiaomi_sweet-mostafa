@@ -282,8 +282,6 @@ struct dsi_display {
 	struct dsi_display_boot_param *boot_disp;
 
 	u32 te_source;
-
-	atomic_t fod_ui;
 };
 
 int dsi_display_dev_probe(struct platform_device *pdev);
@@ -724,6 +722,5 @@ struct dsi_display *get_main_display(void);
 int dsi_display_cmd_engine_enable(struct dsi_display *display);
 int dsi_display_cmd_engine_disable(struct dsi_display *display);
 int dsi_host_alloc_cmd_tx_buffer(struct dsi_display *display);
-void dsi_display_set_fod_ui(struct dsi_display *display, bool status);
 
 #endif /* _DSI_DISPLAY_H_ */
