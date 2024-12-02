@@ -100,6 +100,10 @@ if [ "$oss_only" = true ]; then
 	if [ "$local" = true ]; then
 		git restore arch/arm64/configs/vendor/sweet_defconfig
 	else
+		if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
+		   head=$(git rev-parse --verify HEAD 2>/dev/null); then
+		        HASH="$(echo $head | cut -c1-8)"
+		fi
 		./telegram/telegram -f $ZIPNAME -C "Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) ! Latest commit: $HASH !!WARNING!! OSS Only build!"
 	fi
 	echo -e "\nCompleted in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) !"
