@@ -32,7 +32,7 @@ done
 
 SECONDS=0 # builtin bash timer
 
-ZIPNAME="STRIX-sweet-MIUI-$(date '+%Y%m%d-%H%M').zip"
+ZIPNAME="STRIX-sweet-yVy-$(date '+%Y%m%d-%H%M').zip"
 
 export ARCH=arm64
 export KBUILD_BUILD_USER=vbajs
