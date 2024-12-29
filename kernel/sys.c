@@ -73,6 +73,10 @@
 #include <asm/io.h>
 #include <asm/unistd.h>
 
+#ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
+#include <linux/susfs.h>
+#endif
+
 #ifndef SET_UNALIGN_CTL
 # define SET_UNALIGN_CTL(a, b)	(-EINVAL)
 #endif
@@ -1190,7 +1194,14 @@ SYSCALL_DEFINE1(newuname, struct new_utsname __user *, name)
 	struct new_utsname tmp;
 
 	down_read(&uts_sem);
+#ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
+	if (likely(!susfs_spoof_uname(&tmp)))
+		goto bypass_orig_flow;
+#endif
 	memcpy(&tmp, utsname(), sizeof(tmp));
+#ifdef CONFIG_KSU_SUSFS_SPOOF_UNAME
+bypass_orig_flow:
+#endif
 	if (!is_legacy_ebpf) {
 	  if (!strncmp(current->comm, "netbpfload", 10) &&
 	    current->pid != netbpfload_pid) {
